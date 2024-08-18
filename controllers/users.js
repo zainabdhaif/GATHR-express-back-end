@@ -56,10 +56,11 @@ router.post('/signin', async (req, res) => {
       {
         id: existingUser._id,
         username: existingUser.username,
-        type: user.type
+        type: existingUser.type
       },
       process.env.JWT_SECRET
     );
+    // hello this is zainab
 
     return res.status(200).json({ user: existingUser, token });
   } catch (error) {
