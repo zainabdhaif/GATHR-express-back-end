@@ -25,6 +25,7 @@ router.post('/signup', async (req, res) => {
       {
         id: user._id,
         username: user.username,
+        type: user.type
       },
       process.env.JWT_SECRET
     );
@@ -55,6 +56,7 @@ router.post('/signin', async (req, res) => {
       {
         id: existingUser._id,
         username: existingUser.username,
+        type: user.type
       },
       process.env.JWT_SECRET
     );
