@@ -1,18 +1,18 @@
-const MOCK_USER = {
-  _id: 1,
-  username: 'test',
-  password: 'test',
-};
+// const MOCK_USER = {
+//   _id: 1,
+//   username: 'test',
+//   password: 'test',
+// };
 
 const jwt = require('jsonwebtoken');
 const express = require('express');
 
 const router = express.Router();
 
-router.get('/sign-token', (req, res) => {
-  const token = jwt.sign(MOCK_USER, process.env.JWT_SECRET);
-  res.json({ token });
-});
+// router.get('/sign-token', (req, res) => {
+//   const token = jwt.sign(MOCK_USER, process.env.JWT_SECRET);
+//   res.json({ token });
+// });
 
 router.post('/verify-token', (req, res) => {
   try {

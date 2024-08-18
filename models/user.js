@@ -9,14 +9,19 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-
+  type: {
+    type: String,
+    required: true,
+    default: 'user',
+    enum: ['user', 'admin']
+  },
   bookings: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Booking' 
+    ref: 'Booking'
   }],
   events: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Event' 
+    ref: 'Event'
   }]
 });
 

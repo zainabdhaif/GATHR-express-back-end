@@ -6,10 +6,12 @@ const eventSchema = new mongoose.Schema({
     required: true
   },
   description: {
-    type: String
+    type: String,
+    // required: true
   },
   location: {
-    type: String
+    type: String,
+    // required: true
   },
   category: {
     type: String,
@@ -30,7 +32,7 @@ const eventSchema = new mongoose.Schema({
   }, 
   image: {
     type: String ,
-    required: true
+    // required: true
   }
 }); 
 
