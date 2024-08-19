@@ -9,8 +9,6 @@ const express = require('express');
 
 // Auth
 const verifyToken = require('./middleware/verify-token');
-const isAdmin = require ('./middleware/is-admin.js');
-
 
 // Controllers
 const testJWTRouter = require('./controllers/test-jwt');

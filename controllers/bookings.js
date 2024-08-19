@@ -1,11 +1,12 @@
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
+const isUser = require ('../middleware/is-user.js');
 const Booking = require('../models/booking.js');
 const User = require('../models/user.js');
 const Event = require('../models/event.js')
 const router = express.Router();
 
-router.use(verifyToken);
+router.use(verifyToken, isUser);
 
 // async function insertMockEvent() {
 //     try {
