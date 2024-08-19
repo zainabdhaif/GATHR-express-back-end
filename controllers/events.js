@@ -11,10 +11,8 @@ const router = express.Router();
 
 // ========= Protected Routes =========
 
-router.use(verifyToken, isAdmin);
-
 //create
-router.post('/', async (req, res) => {
+router.post('/', verifyToken,isAdmin,async (req, res) => {
   try {
     req.body.owner = req.user.id;
     const event = await Event.create(req.body);
@@ -56,7 +54,7 @@ router.get('/:eventId', async (req, res, next) => {
 
 
 //update
-router.put('/:eventId', async (req, res) => {
+router.put('/:eventId',  verifyToken,isAdmin,async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
   
@@ -81,7 +79,7 @@ router.put('/:eventId', async (req, res) => {
 
 
 //delete  
-router.delete('/:eventId', async (req, res) => {
+router.delete('/:eventId',  verifyToken,isAdmin,async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
   
