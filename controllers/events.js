@@ -1,0 +1,80 @@
+// controllers/hoots.js
+
+const express = require('express');
+const verifyToken = require('../middleware/verify-token.js');
+const Event = require('../models/event.js');
+const User = require('../models/user.js');
+const router = express.Router();
+
+// ========== Public Routes ===========
+
+// ========= Protected Routes =========
+
+router.use(verifyToken);
+
+
+router.post('/', async (req, res) => {
+    try {
+      req.body.owner = req.user.id;
+      const event = await Event.create(req.body);
+      event._doc.owner = req.user;
+      res.status(201).json(event);
+    } 
+    catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
+  router.get('/', async (req, res) => {
+    try {
+      const events = await Event.find({})
+        .populate('owner')
+        .sort({ dateStarted: 'desc' });
+      res.status(200).json(events);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
+
+  router.put('/:eventId', async (req, res) => {
+    try {
+      const event = await Event.findById(req.params.eventId);
+  
+      if (!event.owner.equals(req.user.id)) {
+        return res.status(403).send("You're not allowed to do that!");
+      }
+  
+      const updatedEvent = await Event.findByIdAndUpdate(
+        req.params.eventId,
+        req.body,
+        { new: true }
+      );
+  
+      updatedEvent._doc.owner = req.user;
+  
+      res.status(200).json(updatedEvent);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
+
+  router.delete('/:eventId', async (req, res) => {
+    try {
+      const event = await Event.findById(req.params.eventId);
+  
+      if (!event.owner.equals(req.user.id)) {
+        return res.status(403).send("You're not allowed to do that!");
+      }
+  
+      const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+      res.status(200).json(deletedEvent);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  });
+
+
+
+module.exports = router;
