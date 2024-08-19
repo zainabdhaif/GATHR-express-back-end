@@ -9,13 +9,14 @@ const express = require('express');
 
 // Auth
 const verifyToken = require('./middleware/verify-token');
+const isAdmin = require ('./middleware/is-admin.js');
 
 
 // Controllers
 const testJWTRouter = require('./controllers/test-jwt');
 const usersRouter = require('./controllers/users');
 const profilesRouter = require('./controllers/profiles');
-const bookingRouter = require('./controllers/booking');
+const bookingsRouter = require('./controllers/bookings');
 const eventsRouter = require('./controllers/events.js');
 
 const app = express();
@@ -29,8 +30,7 @@ app.use(express.json());
 app.use('/test-jwt', testJWTRouter);
 app.use('/users', usersRouter);
 app.use('/profiles', verifyToken, profilesRouter);
-app.use('/booking', bookingRouter);
-
+app.use('/bookings', bookingsRouter);
 app.use('/events', eventsRouter);
 
 app.listen(PORT, () => {

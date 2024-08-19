@@ -2,6 +2,7 @@
 
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
+const isAdmin = require ('../middleware/is-admin.js');
 const Event = require('../models/event.js');
 const User = require('../models/user.js');
 const router = express.Router();
@@ -10,7 +11,7 @@ const router = express.Router();
 
 // ========= Protected Routes =========
 
-router.use(verifyToken);
+router.use(verifyToken, isAdmin);
 
 
 router.post('/', async (req, res) => {
