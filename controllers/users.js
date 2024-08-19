@@ -21,16 +21,16 @@ router.post('/signup', async (req, res) => {
 
     const user = await User.create({ username, hashedPassword });
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        username: user.username,
-        type: user.type
-      },
-      process.env.JWT_SECRET
-    );
+    // const token = jwt.sign(
+    //   {
+    //     id: user._id,
+    //     username: user.username,
+    //     type: user.type
+    //   },
+    //   process.env.JWT_SECRET
+    // );
 
-    return res.status(201).json({ user, token });
+    return res.status(201).json({ user});
   } catch (error) {
     res.status(400).json({ error: 'Something wen wrong, try again.' });
   }

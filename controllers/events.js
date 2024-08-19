@@ -13,20 +13,27 @@ const router = express.Router();
 
 router.use(verifyToken, isAdmin);
 
-
+//create
 router.post('/', async (req, res) => {
-    try {
-      req.body.owner = req.user.id;
-      const event = await Event.create(req.body);
-      event._doc.owner = req.user;
-      res.status(201).json(event);
-    } 
-    catch (error) {
-      res.status(500).json(error);
+  try {
+    req.body.owner = req.user.id;
+    const event = await Event.create(req.body);
+    event._doc.owner = req.user;
+    const user = await User.findById(req.user.id);
+    if (user) {
+      user.events.push(event._id);
+      await user.save();
     }
-  });
+    res.status(201).json(event);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+});
 
-  router.get('/', async (req, res) => {
+
+//index
+router.get('/', async (req, res) => {
     try {
       const events = await Event.find({})
         .populate('owner')
@@ -37,8 +44,19 @@ router.post('/', async (req, res) => {
     }
   });
 
+//show
+router.get('/:eventId', async (req, res, next) => {
+  try{
+    const event = await Event.findById(req.params.eventId);
+    res.status(200).json(event)
+  }catch (error){
+    res.status(500).json(error);
+  }
+})
 
-  router.put('/:eventId', async (req, res) => {
+
+//update
+router.put('/:eventId', async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
   
@@ -61,15 +79,19 @@ router.post('/', async (req, res) => {
   });
 
 
-  router.delete('/:eventId', async (req, res) => {
+
+//delete  
+router.delete('/:eventId', async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
   
       if (!event.owner.equals(req.user.id)) {
         return res.status(403).send("You're not allowed to do that!");
       }
-  
       const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+      const user = await User.findById(req.user.id);
+      user.events.pull(event._id);
+      await user.save();
       res.status(200).json(deletedEvent);
     } catch (error) {
       res.status(500).json(error);

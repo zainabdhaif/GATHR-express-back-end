@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 // get all bookings
 router.get('/', async (req, res) => {
     try {
-        const bookings = await Booking.find({ userid: req.user.id }).populate('userid');
+        const bookings = await Booking.find({ userid: req.user.id }).populate('eventid');
         res.json(bookings);
     } catch (error) {
         res.status(500).json(error);
@@ -51,8 +51,8 @@ router.get('/', async (req, res) => {
 // get booking by id
 router.get('/:bookingID', async (req, res) => {
     try {
-        const bookings = await Booking.findById(req.params.bookingID).populate('eventid');
-        res.status(200).json(bookings);
+        const booking = await Booking.findById(req.params.bookingID).populate('eventid');
+        res.status(200).json(booking);
     } catch (error) {
         res.status(500).json(error);
     }
