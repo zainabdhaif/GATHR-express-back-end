@@ -25,18 +25,47 @@ router.use(verifyToken, isUser);
 // insertMockEvent();
 
 // create booking
+
+// router.post('/', async (req, res) => {
+//     try {
+//         req.body.userid = req.user.id; // user id from token
+//         const booking = await Booking.create(req.body);
+//         const user = await User.findById(req.user.id);
+//         user.bookings.push(booking._id);
+//         await user.save();
+//         res.status(201).json(booking);
+//     } catch (error) {
+//         res.status(500).json(error);
+//     }
+// });
+
 router.post('/', async (req, res) => {
     try {
-        req.body.userid = req.user.id; // user id from token
-        const booking = await Booking.create(req.body);
-        const user = await User.findById(req.user.id);
-        user.bookings.push(booking._id);
-        await user.save();
-        res.status(201).json(booking);
+      const { eventid, quantity } = req.body;
+      const date = req.body.date;
+      const dateConverted = new Date(date);
+      const event = await Event.findById(eventid);
+      const startDate = new Date(event.dateStarted);
+      const endDate = new Date(event.dateEnded);
+      if (dateConverted < startDate || dateConverted > endDate) {
+        return res.status(400).json({ error: 'Booking date is not within the event date range' });
+      }
+      const price = event.price * quantity;
+      const booking = await Booking.create({
+        userid: req.user.id,
+        eventid,
+        date,
+        quantity,
+        price
+      });
+      const user = await User.findById(req.user.id);
+      user.bookings.push(booking._id);
+      await user.save();
+      res.status(201).json(booking);
     } catch (error) {
-        res.status(500).json(error);
+      res.status(500).json(error);
     }
-});
+  });
 
 // get all bookings
 router.get('/', async (req, res) => {
