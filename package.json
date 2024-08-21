@@ -1,5 +1,5 @@
 {
-  "name": "express-api-jwt-auth-template",
+  "name": "gathr-express-backend",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",

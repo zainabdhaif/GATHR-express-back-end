@@ -51,4 +51,23 @@ const eventSchema = new mongoose.Schema({
   }
 }); 
 
+// eventSchema.pre('remove', async function(next) {
+//   try {
+//     await Booking.deleteMany({ eventid: this._id });
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+// eventSchema.pre('findOneAndRemove', async function(next) {
+//   try {
+//     await Booking.deleteMany({ eventid: this._id });
+//     next();
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
+
 module.exports = mongoose.model('Event', eventSchema);

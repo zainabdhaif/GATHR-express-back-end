@@ -5,6 +5,7 @@ const verifyToken = require('../middleware/verify-token.js');
 const isAdmin = require ('../middleware/is-admin.js');
 const Event = require('../models/event.js');
 const User = require('../models/user.js');
+const Booking = require('../models/booking.js');
 const router = express.Router();
 
 // ========== Public Routes ===========
@@ -79,23 +80,68 @@ router.put('/:eventId',  verifyToken,isAdmin,async (req, res) => {
 
 
 //delete  
-router.delete('/:eventId',  verifyToken,isAdmin,async (req, res) => {
-    try {
-      const event = await Event.findById(req.params.eventId);
+// router.delete('/:eventId',  verifyToken,isAdmin,async (req, res) => {
+//     try {
+//       const event = await Event.findById(req.params.eventId);
   
-      if (!event.owner.equals(req.user.id)) {
-        return res.status(403).send("You're not allowed to do that!");
-      }
-      const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
-      const user = await User.findById(req.user.id);
-      user.events.pull(event._id);
-      await user.save();
-      res.status(200).json(deletedEvent);
-    } catch (error) {
-      res.status(500).json(error);
+//       if (!event.owner.equals(req.user.id)) {
+//         return res.status(403).send("You're not allowed to do that!");
+//       }
+//       const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+//       const user = await User.findById(req.user.id);
+//       user.events.pull(event._id);
+//       await user.save();
+//       res.status(200).json(deletedEvent);
+//     } catch (error) {
+//       res.status(500).json(error);
+//     }
+//   });
+
+// router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
+//   try {
+//     const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+  
+//     if (!deletedEvent) {
+//       return res.status(404).json({ message: 'Event not found' });
+//     }
+
+//     if (!deletedEvent.owner.equals(req.user.id)) {
+//       return res.status(403).json({ message: "You're not allowed to do that!" });
+//     }
+
+//     const user = await User.findById(req.user.id);
+//     user.events.pull(deletedEvent._id);
+//     await user.save();
+
+
+//     res.status(200).json(deletedEvent);
+//   } catch (error) {
+//     res.status(500).json(error);
+//   }
+// });
+
+router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
+  
+    if (!deletedEvent) {
+      return res.status(404).json({ message: 'Event not found' });
     }
-  });
 
+    if (!deletedEvent.owner.equals(req.user.id)) {
+      return res.status(403).json({ message: "You're not allowed to do that!" });
+    }
 
+    // Delete bookings associated with the event
+    await Booking.deleteMany({ eventid: deletedEvent._id });
 
+    const user = await User.findById(req.user.id);
+    user.events.pull(deletedEvent._id);
+    await user.save();
+
+    res.status(200).json(deletedEvent);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
 module.exports = router;
