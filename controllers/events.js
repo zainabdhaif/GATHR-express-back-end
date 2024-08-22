@@ -1,5 +1,3 @@
-// controllers/hoots.js
-
 const express = require('express');
 const verifyToken = require('../middleware/verify-token.js');
 const isAdmin = require ('../middleware/is-admin.js');
@@ -8,11 +6,6 @@ const User = require('../models/user.js');
 const Booking = require('../models/booking.js');
 const router = express.Router();
 
-// ========== Public Routes ===========
-
-// ========= Protected Routes =========
-
-//create
 router.post('/', verifyToken,isAdmin,async (req, res) => {
   try {
     req.body.owner = req.user.id;
@@ -30,8 +23,6 @@ router.post('/', verifyToken,isAdmin,async (req, res) => {
   }
 });
 
-
-//index
 router.get('/', async (req, res) => {
     try {
       const events = await Event.find({})
@@ -43,7 +34,7 @@ router.get('/', async (req, res) => {
     }
   });
 
-//show
+
 router.get('/:eventId', async (req, res, next) => {
   try{
     const event = await Event.findById(req.params.eventId);
@@ -53,8 +44,6 @@ router.get('/:eventId', async (req, res, next) => {
   }
 })
 
-
-//update
 router.put('/:eventId',  verifyToken,isAdmin,async (req, res) => {
     try {
       const event = await Event.findById(req.params.eventId);
@@ -77,8 +66,6 @@ router.put('/:eventId',  verifyToken,isAdmin,async (req, res) => {
     }
   });
 
-
-
 router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
   try {
     const deletedEvent = await Event.findByIdAndDelete(req.params.eventId);
@@ -86,12 +73,9 @@ router.delete('/:eventId', verifyToken, isAdmin, async (req, res) => {
     if (!deletedEvent) {
       return res.status(404).json({ message: 'Event not found' });
     }
-
     if (!deletedEvent.owner.equals(req.user.id)) {
       return res.status(403).json({ message: "You're not allowed to do that!" });
     }
-
-    // Delete bookings associated with the event
     await Booking.deleteMany({ eventid: deletedEvent._id });
 
     const user = await User.findById(req.user.id);

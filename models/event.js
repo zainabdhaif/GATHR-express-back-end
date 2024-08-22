@@ -7,11 +7,11 @@ const eventSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    // required: true
+    required: true
   },
   location: {
     type: String,
-    // required: true
+    required: true
   },
   category: {
     type: String,
@@ -43,13 +43,12 @@ const eventSchema = new mongoose.Schema({
   }, 
   image: {
     type: String ,
-    // required: true
+    required: true
   },
   owner:{
     type: mongoose.Schema.Types.ObjectId,
     ref:'User'
   }
 }); 
-
 
 module.exports = mongoose.model('Event', eventSchema);

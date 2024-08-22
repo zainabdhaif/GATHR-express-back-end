@@ -1,9 +1,7 @@
 const express = require('express');
-// auth
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Models
 const User = require('../models/user');
 const router = express.Router();
 
@@ -20,16 +18,6 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = bcrypt.hashSync(password, parseInt(process.env.SALT_ROUNDS));
 
     const user = await User.create({ username, hashedPassword });
-
-    // const token = jwt.sign(
-    //   {
-    //     id: user._id,
-    //     username: user.username,
-    //     type: user.type
-    //   },
-    //   process.env.JWT_SECRET
-    // );
-
     return res.status(201).json({ user});
   } catch (error) {
     res.status(400).json({ error: 'Something wen wrong, try again.' });
@@ -60,8 +48,6 @@ router.post('/signin', async (req, res) => {
       },
       process.env.JWT_SECRET
     );
-    // hello this is zainab
-
     return res.status(200).json({ user: existingUser, token });
   } catch (error) {
     res.status(400).json({ error: 'Something went wrong, try again.' });
